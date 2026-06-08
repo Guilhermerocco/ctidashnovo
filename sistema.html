@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendações CTI</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e8f0fe 0%, #d4e4fc 100%);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            --card-bg: rgba(255, 255, 255, 0.55);
+            --card-border: rgba(255, 255, 255, 0.7);
+            --primary: #007aff;
+            --primary-light: #e8f0fe;
+            --text-main: #1c1c1e;
+            --text-muted: #636366;
+            --tag-bg: rgba(0, 122, 255, 0.1);
+            --tag-text: #007aff;
+            --active-bg: rgba(0, 122, 255, 0.12);
+            --hover-bg: rgba(0, 0, 0, 0.04);
+            --sidebar-bg: rgba(255, 255, 255, 0.6);
+            --drawer-bg: rgba(255, 255, 255, 0.8);
+            --icon-color: #3c3c43;
+            --score-badge-bg: rgba(0, 122, 255, 0.15);
+            --score-badge-text: #007aff;
+            --fab-bg: rgba(0, 122, 255, 0.85);
+            --fab-text: white;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+            --glass-bg: rgba(44, 44, 46, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --card-bg: rgba(44, 44, 46, 0.55);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary: #0a84ff;
+            --primary-light: #1c3a5e;
+            --text-main: #f5f5f7;
+            --text-muted: #98989d;
+            --tag-bg: rgba(10, 132, 255, 0.2);
+            --tag-text: #0a84ff;
+            --active-bg: rgba(10, 132, 255, 0.2);
+            --hover-bg: rgba(255, 255, 255, 0.06);
+            --sidebar-bg: rgba(44, 44, 46, 0.65);
+            --drawer-bg: rgba(44, 44, 46, 0.8);
+            --icon-color: #aeaeb2;
+            --score-badge-bg: rgba(10, 132, 255, 0.3);
+            --score-badge-text: #0a84ff;
+            --fab-bg: rgba(10, 132, 255, 0.9);
+            --fab-text: white;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, sans-serif;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            background: transparent;
+            backdrop-filter: blur(30px);
+            border-radius: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @media (min-width: 1200px) {
+            .app-container {
+                width: 90vw;
+                max-width: 1400px;
+                height: 90vh;
+                border-radius: 32px;
+                box-shadow: var(--glass-shadow);
+                background: var(--glass-bg);
+                border: 1px solid var(--glass-border);
+            }
+        }
+
+        .sidebar {
+            width: 34%;
+            min-width: 300px;
+            max-width: 400px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            height: 64px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            background: transparent;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .icon-btn {
+            background: none; border: none; cursor: pointer; color: var(--icon-color);
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .icon-btn:hover { background: var(--hover-bg); }
+
+        .search-container { padding: 12px 16px; background: transparent; border-bottom: 1px solid var(--glass-border); }
+        .search-wrapper {
+            background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border); border-radius: 12px; display: flex; align-items: center;
+            padding: 0 12px; height: 38px; transition: all 0.2s;
+        }
+        .search-wrapper:focus-within { background: var(--glass-bg); border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); }
+        .search-icon { color: var(--icon-color); margin-right: 8px; display: flex; align-items: center; }
+        .search-input { width: 100%; border: none; background: transparent; outline: none; font-size: 15px; color: var(--text-main); }
+        .search-input::placeholder { color: var(--text-muted); }
+        .clear-search { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; display: none; }
+
+        .client-list { flex: 1; overflow-y: auto; background: transparent; padding: 8px; }
+        .cliente-item {
+            display: flex; align-items: center; padding: 12px 12px; border-radius: 16px;
+            margin-bottom: 2px; cursor: pointer; transition: background 0.2s; position: relative;
+        }
+        .cliente-item:hover { background: var(--hover-bg); }
+        .cliente-item.ativo { background: var(--active-bg); }
+        .cliente-avatar { width: 44px; height: 44px; border-radius: 50%; margin-right: 12px; flex-shrink: 0; background: var(--tag-bg); border: 1px solid var(--card-border); }
+        .cliente-info { flex: 1; min-width: 0; position: relative; }
+        .cliente-info h4 { font-size: 16px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; }
+        .cliente-info p { font-size: 13px; color: var(--text-muted); }
+        .badge-nivel { position: absolute; right: 0; top: 0; background: var(--tag-bg); color: var(--tag-text); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+        .score-mini { font-weight: 600; font-size: 12px; color: var(--primary); margin-left: 4px; }
+        .no-results { padding: 30px; text-align: center; color: var(--text-muted); font-size: 14px; display: none; }
+
+        .drawer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--drawer-bg); backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
+            z-index: 20; transform: translateX(-100%); transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1);
+            display: flex; flex-direction: column; border-right: 1px solid var(--glass-border);
+        }
+        .drawer.open { transform: translateX(0); }
+        .drawer-header { height: 100px; background: transparent; padding: 20px; display: flex; align-items: flex-end; gap: 16px; color: var(--text-main); border-bottom: 1px solid var(--glass-border); }
+        .drawer-header h2 { font-size: 22px; font-weight: 600; color: var(--text-main); }
+        .drawer-close-btn { background: none; border: none; color: var(--primary); cursor: pointer; padding: 4px; display: flex; align-items: center; }
+        .drawer-content { flex: 1; overflow-y: auto; padding: 12px 0; background: transparent; }
+        .drawer-section-title { padding: 16px 24px 8px; font-size: 13px; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .drawer-item {
+            display: flex; align-items: center; padding: 14px 24px; margin: 2px 12px;
+            border-radius: 12px; cursor: pointer; transition: background 0.2s; gap: 16px; color: var(--text-main);
+        }
+        .drawer-item:hover { background: var(--hover-bg); }
+        .drawer-item-icon { font-size: 20px; width: 28px; text-align: center; }
+        .drawer-item-text h3 { font-size: 16px; font-weight: 500; color: var(--text-main); margin-bottom: 2px; }
+        .drawer-item-text p { font-size: 13px; color: var(--text-muted); }
+
+        .client-panel { flex: 1; display: flex; flex-direction: column; background: transparent; position: relative; overflow: hidden; }
+        .welcome-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 30px; z-index: 5; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .welcome-screen h1 { font-size: 28px; font-weight: 600; color: var(--text-main); margin-top: 16px; margin-bottom: 8px; }
+        .welcome-screen p { font-size: 15px; color: var(--text-muted); max-width: 400px; line-height: 1.5; }
+
+        .panel-header {
+            background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border-bottom: 1px solid var(--glass-border); padding: 12px 24px;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; z-index: 2;
+        }
+        .client-meta { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .client-meta img { width: 44px; height: 44px; border-radius: 50%; background: var(--tag-bg); border: 1px solid var(--card-border); }
+        .client-info-text h2 { font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; }
+        .client-info-text span { font-size: 13px; color: var(--text-muted); }
+        .client-actions { display: flex; gap: 8px; }
+        .contact-btn {
+            display: flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 12px;
+            border: 1px solid var(--card-border); background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            color: var(--text-main); font-weight: 500; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.2s;
+        }
+        .contact-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .panel-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: transparent; }
+        .card {
+            background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: var(--glass-shadow);
+        }
+        .tags-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .tag { background: var(--tag-bg); color: var(--tag-text); padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid rgba(0, 122, 255, 0.2); }
+        .recommendation-highlight {
+            background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--card-border); border-radius: 20px; padding: 20px;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: var(--glass-shadow);
+        }
+        .rec-info h3 { margin: 0 0 4px; color: var(--primary); font-size: 18px; font-weight: 600; }
+        .rec-info p { margin: 0; color: var(--text-main); font-size: 15px; }
+        .score-badge {
+            background: var(--score-badge-bg); color: var(--score-badge-text); padding: 8px 18px; border-radius: 20px;
+            font-weight: 600; font-size: 16px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 122, 255, 0.2);
+        }
+        .justifications-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; cursor: pointer; }
+        .justifications-title h4 { margin: 0; font-size: 16px; color: var(--text-main); }
+        .toggle-btn {
+            background: var(--tag-bg); border: none; color: var(--primary); font-weight: 500; cursor: pointer;
+            font-size: 13px; padding: 6px 12px; border-radius: 20px; transition: background 0.2s;
+        }
+        .toggle-btn:hover { background: var(--active-bg); }
+        .rule-item { border-bottom: 1px solid var(--card-border); padding: 14px 0; display: flex; flex-direction: column; gap: 8px; }
+        .rule-item:last-child { border-bottom: none; }
+        .rule-desc { font-size: 14px; color: var(--text-main); line-height: 1.4; }
+        .rule-stats { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--text-muted); }
+        .rule-stats span { background: var(--tag-bg); color: var(--tag-text); padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+
+        .chatbot-fab {
+            position: absolute; bottom: 24px; right: 24px; background: var(--fab-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            color: var(--fab-text); width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3); cursor: pointer; z-index: 100; border: 1px solid rgba(255, 255, 255, 0.3); transition: transform 0.2s;
+        }
+        .chatbot-fab:hover { transform: scale(1.08); }
+
+        .chatbot-window {
+            position: absolute; bottom: 90px; right: 24px; width: 360px; max-width: calc(100vw - 40px);
+            height: 480px; max-height: calc(100vh - 120px); background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: var(--glass-shadow);
+            display: none; flex-direction: column; z-index: 99; overflow: hidden;
+        }
+        .chatbot-window.open { display: flex; }
+        .chatbot-header {
+            display: flex; justify-content: space-between; align-items: center; padding: 14px 18px;
+            border-bottom: 1px solid var(--card-border); background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px 24px 0 0;
+        }
+        .chatbot-header h3 { font-size: 16px; font-weight: 600; color: var(--text-main); }
+        .chatbot-close { background: none; border: none; cursor: pointer; color: var(--text-muted); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; }
+        .chatbot-close:hover { background: var(--hover-bg); }
+        .chatbot-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: transparent; }
+        .message { max-width: 85%; padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+        .message.user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .message.bot { align-self: flex-start; background: var(--card-bg); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid var(--card-border); }
+        .chatbot-input-area {
+            display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--card-border);
+            background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 0 0 24px 24px;
+        }
+        .chatbot-input-area input { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--card-border); background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); color: var(--text-main); font-size: 14px; outline: none; }
+        .chatbot-input-area input::placeholder { color: var(--text-muted); }
+        .chatbot-send-btn { background: var(--primary); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+        .chatbot-send-btn:hover { opacity: 0.9; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+        [data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); }
+
+        .logo-area { display: flex; align-items: center; gap: 8px; }
+        .logo-img { height: 36px; width: auto; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div id="drawer" class="drawer">
+                <div class="drawer-header">
+                    <button id="close-drawer-btn" class="drawer-close-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
+                    <h2>Filtros</h2>
+                </div>
+                <div class="drawer-content">
+                    <div class="drawer-section-title">Segmentação por Nível</div>
+                    <div class="drawer-item" onclick="filtrarPorGaveta('todos')">
+                        <div class="drawer-item-icon">👥</div>
+                        <div class="drawer-item-text"><h3>Todos os Níveis</h3><p>Exibir todos da base</p></div>
+                    </div>
+                    <div class="drawer-item" onclick="filtrarPorGaveta('A')">
+                        <div class="drawer-item-icon">🥇</div>
+                        <div class="drawer-item-text"><h3>Nível A</h3><p>Alta prioridade/score</p></div>
+                    </div>
+                    <div class="drawer-item" onclick="filtrarPorGaveta('B')">
+                        <div class="drawer-item-icon">🥈</div>
+                        <div class="drawer-item-text"><h3>Nível B</h3><p>Médio porte</p></div>
+                    </div>
+                    <div class="drawer-item" onclick="filtrarPorGaveta('C')">
+                        <div class="drawer-item-icon">🥉</div>
+                        <div class="drawer-item-text"><h3>Nível C</h3><p>Demais clientes</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <img src="logo-cti.png" alt="CTI" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <span class="logo-text" style="display:none; font-weight:600; font-size:14px; color: var(--primary);">CTI IA</span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="theme-toggle-btn" title="Alternar Tema"></button>
+                    <button class="icon-btn" id="open-drawer-btn" title="Menu de Filtros">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </span>
+                    <input type="text" id="search-chat-input" class="search-input" placeholder="Buscar cliente ou serviço...">
+                    <button id="clear-search-btn" class="clear-search">&times;</button>
+                </div>
+            </div>
+
+            <div class="client-list" id="lista-clientes"></div>
+            <div class="no-results" id="no-results-msg">Nenhum cliente encontrado.</div>
+        </aside>
+
+        <!-- PAINEL PRINCIPAL -->
+        <main class="client-panel" id="client-panel">
+            <div class="welcome-screen" id="tela-vazia">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+                <h1>Recomendações Inteligentes</h1>
+                <p>Selecione um cliente na lista para visualizar a oportunidade e entrar em contato.</p>
+            </div>
+
+            <div id="painel-cliente" style="display: none; flex-direction: column; height: 100%;">
+                <div class="panel-header">
+                    <div class="client-meta">
+                        <div class="client-info-text">
+                            <h2 id="header-nome">Cliente #000</h2>
+                            <span id="header-status">Segmento: ... | Nível ...</span>
+                        </div>
+                    </div>
+                    <div class="client-actions">
+                        <a href="#" id="email-btn" class="contact-btn" target="_blank">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            Email
+                        </a>
+                        <a href="#" id="whatsapp-btn" class="contact-btn" target="_blank">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-content" id="panel-content"></div>
+
+                <button class="chatbot-fab" id="chatbot-fab" title="Assistente IA">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
+
+                <div class="chatbot-window" id="chatbot-window">
+                    <div class="chatbot-header">
+                        <h3>🤖 Assistente CTI</h3>
+                        <button class="chatbot-close" id="chatbot-close">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+                    <div class="chatbot-messages" id="chatbot-messages">
+                        <div class="message bot">👋 Olá! Sou o assistente virtual da CTI. Como posso ajudar?</div>
+                    </div>
+                    <div class="chatbot-input-area">
+                        <input type="text" id="chatbot-input" placeholder="Digite sua dúvida...">
+                        <button class="chatbot-send-btn" id="chatbot-send-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ========================
+        // DADOS E VARIÁVEIS GLOBAIS
+        // ========================
+        let listaRecomendacoes = [];
+        let listaFiltrada = [];
+        let clienteAtual = null; // 👈 CORRIGIDO: variável adicionada
+
+        // ========================
+        // TEMA (DARK/LIGHT)
+        // ========================
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const rootElement = document.documentElement;
+        const iconSun = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const iconMoon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        rootElement.setAttribute('data-theme', currentTheme);
+        themeToggleBtn.innerHTML = currentTheme === 'dark' ? iconSun : iconMoon;
+
+        themeToggleBtn.addEventListener('click', () => {
+            let theme = rootElement.getAttribute('data-theme');
+            let newTheme = theme === 'dark' ? 'light' : 'dark';
+            rootElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggleBtn.innerHTML = newTheme === 'dark' ? iconSun : iconMoon;
+        });
+
+        // ========================
+        // DRAWER E BUSCA
+        // ========================
+        const drawer = document.getElementById('drawer');
+        document.getElementById('open-drawer-btn').addEventListener('click', () => drawer.classList.add('open'));
+        document.getElementById('close-drawer-btn').addEventListener('click', () => drawer.classList.remove('open'));
+
+        const searchInput = document.getElementById('search-chat-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const noResultsMsg = document.getElementById('no-results-msg');
+
+        searchInput.addEventListener('input', function() {
+            const termo = this.value.toLowerCase().trim();
+            clearSearchBtn.style.display = termo.length > 0 ? 'block' : 'none';
+            const resultadoBusca = listaFiltrada.filter(cliente => {
+                const codcliStr = String(cliente.codcli).toLowerCase();
+                const servicoStr = (cliente.servico_recomendado).toLowerCase();
+                return codcliStr.includes(termo) || servicoStr.includes(termo);
+            });
+            renderizarLista(resultadoBusca);
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            renderizarLista(listaFiltrada);
+            searchInput.focus();
+        });
+
+        function filtrarPorGaveta(nivel) {
+            if (nivel === 'todos') {
+                renderizarLista(listaFiltrada);
+            } else {
+                const resultado = listaFiltrada.filter(c => String(c.nivel_cliente).toUpperCase() === nivel);
+                renderizarLista(resultado);
+            }
+            drawer.classList.remove('open');
+        }
+
+        // ========================
+        // CARREGAR DADOS E RENDERIZAR LISTA
+        // ========================
+        async function carregarDados() {
+            try {
+                const resposta = await fetch('recomendacoes.json');
+                const json = await resposta.json();
+                listaRecomendacoes = json.recomendacoes;
+                listaFiltrada = listaRecomendacoes.filter(r =>
+                    r.score > 800 &&
+                    Math.max(...r.justificativas.map(j => j.score_regra)) > 800
+                );
+                renderizarLista(listaFiltrada);
+            } catch (erro) {
+                console.error("Erro ao processar o arquivo JSON de recomendações:", erro);
+            }
+        }
+
+        function renderizarLista(listaParaExibir) {
+            const container = document.getElementById('lista-clientes');
+            container.innerHTML = '';
+            if (listaParaExibir.length === 0) {
+                noResultsMsg.style.display = 'block';
+                return;
+            } else {
+                noResultsMsg.style.display = 'none';
+            }
+            listaParaExibir.forEach(cliente => {
+                const item = document.createElement('div');
+                item.classList.add('cliente-item');
+                item.innerHTML = `
+                    <div class="cliente-info">
+                        <span class="badge-nivel">Nível ${cliente.nivel_cliente}</span>
+                        <h4>Cliente #${cliente.codcli}</h4>
+                        <p>💡 ${cliente.servico_recomendado} <span class="score-mini">${cliente.score.toFixed(0)}</span></p>
+                    </div>
+                `;
+                item.addEventListener('click', () => selecionarCliente(cliente.codcli, item));
+                container.appendChild(item);
+            });
+        }
+
+        // =======================
+        // FUNÇÃO DE SELEÇÃO
+        // ========================
+        function selecionarCliente(codcli, elementoClicado) {
+            document.querySelectorAll('.cliente-item').forEach(el => el.classList.remove('ativo'));
+            elementoClicado.classList.add('ativo');
+
+            const cliente = listaFiltrada.find(c => c.codcli === codcli);
+            if (!cliente) return;
+
+            clienteAtual = cliente; // 👈 CORRIGIDO: salva o cliente atual
+
+            document.getElementById('tela-vazia').style.display = 'none';
+            document.getElementById('painel-cliente').style.display = 'flex';
+            document.getElementById('header-nome').innerText = `Cliente #${cliente.codcli}`;
+            document.getElementById('header-status').innerText = `Segmento: ${cliente.segmento} | Nível ${cliente.nivel_cliente}`;
+
+            const email = `cliente${cliente.codcli}@cti.com.br`;
+            const telefone = `+5511999999999`;
+            document.getElementById('email-btn').href = `mailto:${email}`;
+            document.getElementById('whatsapp-btn').href = `https://wa.me/${telefone}`;
+
+            const panelContent = document.getElementById('panel-content');
+            panelContent.innerHTML = '';
+
+            const servicosCard = document.createElement('div');
+            servicosCard.className = 'card';
+            let tags = cliente.servicos_atuais.map(s => `<span class="tag">${s}</span>`).join('');
+            servicosCard.innerHTML = `<strong style="font-size:15px;">📋 Serviços ativos contratados</strong><div class="tags-grid">${tags}</div>`;
+            panelContent.appendChild(servicosCard);
+
+            const recCard = document.createElement('div');
+            recCard.className = 'recommendation-highlight';
+            recCard.innerHTML = `
+                <div class="rec-info">
+                    <h3>🚀 Oportunidade detectada</h3>
+                    <p>O algoritmo recomenda a oferta de <strong>${cliente.servico_recomendado}</strong>.</p>
+                </div>
+                <div class="score-badge">Score ${cliente.score.toFixed(0)}</div>
+            `;
+            panelContent.appendChild(recCard);
+
+            const justCard = document.createElement('div');
+            justCard.className = 'card';
+            const totalRegras = cliente.justificativas.length;
+            const topRegras = cliente.justificativas.slice(0, 3);
+
+            function criarRegraHTML(regra) {
+                let descricao = '';
+                if (regra.tipo_regra === 'dupla') {
+                    descricao = `${regra.percentual_relacao}% dos clientes que possuem <strong>${regra.origem}</strong> também possuem <strong>${regra.destino}</strong>.`;
+                } else {
+                    descricao = `${regra.percentual_relacao}% dos clientes que possuem <strong>${regra.origem_1}</strong> e <strong>${regra.origem_2}</strong> também possuem <strong>${regra.destino}</strong>.`;
+                }
+                return `
+                    <div class="rule-item">
+                        <div class="rule-desc">${descricao}</div>
+                        <div class="rule-stats">
+                            <span>📈 Lift: ${regra.lift.toFixed(2)}</span>
+                            <span>🔗 Relação: ${regra.percentual_relacao}%</span>
+                            <span>📊 Média da carteira: ${regra.percentual_base || 'N/A'}%</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            justCard.innerHTML = `
+                <div class="justifications-title" id="toggle-justifications">
+                    <h4>Justificativas</h4>
+                    <button class="toggle-btn" id="btn-toggle-just">Ver todas</button>
+                </div>
+                <div id="just-container">
+                    ${topRegras.map(criarRegraHTML).join('')}
+                </div>
+            `;
+            panelContent.appendChild(justCard);
+
+            const btnToggle = justCard.querySelector('#btn-toggle-just');
+            const justContainer = justCard.querySelector('#just-container');
+            let expanded = false;
+
+            btnToggle.addEventListener('click', () => {
+                if (!expanded) {
+                    justContainer.innerHTML = cliente.justificativas.map(criarRegraHTML).join('');
+                    btnToggle.textContent = 'Mostrar menos';
+                    document.querySelector('#toggle-justifications h4').textContent = `📊 Evidências das regras (todas as ${totalRegras})`;
+                    expanded = true;
+                } else {
+                    justContainer.innerHTML = topRegras.map(criarRegraHTML).join('');
+                    btnToggle.textContent = 'Ver todas';
+                    document.querySelector('#toggle-justifications h4').textContent = `📊 Evidências das regras (top 3 de ${totalRegras})`;
+                    expanded = false;
+                }
+            });
+
+            panelContent.scrollTop = 0;
+        }
+
+        // ========================
+        // CHATBOT
+        // ========================
+        const chatbotFab = document.getElementById('chatbot-fab');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSendBtn = document.getElementById('chatbot-send-btn');
+
+        chatbotFab.addEventListener('click', () => {
+            chatbotWindow.classList.toggle('open');
+            if (chatbotWindow.classList.contains('open')) {
+                chatbotInput.focus();
+            }
+        });
+
+        chatbotClose.addEventListener('click', () => {
+            chatbotWindow.classList.remove('open');
+        });
+
+        async function enviarParaIA(mensagem) {
+            const WEBHOOK_URL = 'https://cti12dias.app.n8n.cloud/webhook/cti12dias'; // 👈 CORRIGIDO: URL correta
+            
+            let contexto = null;
+            if (clienteAtual) {
+                contexto = {
+                    codigo: clienteAtual.codcli,
+                    segmento: clienteAtual.segmento,
+                    nivel: clienteAtual.nivel_cliente,
+                    score: clienteAtual.score,
+                    servico_recomendado: clienteAtual.servico_recomendado,
+                    servicos_atuais: clienteAtual.servicos_atuais
+                };
+            }
+            
+            console.log('📤 Enviando:', mensagem);
+            console.log('📋 Contexto:', contexto);
+            
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pergunta: mensagem, contexto: contexto })
+            });
+            
+            console.log('📡 Status:', response.status);
+            
+            const texto = await response.text();
+            console.log('📥 Resposta bruta:', texto);
+            
+            try {
+                const data = JSON.parse(texto);
+                console.log('✅ Data:', data);
+                if (data.output) return data.output;
+                if (data.resposta) return data.resposta;
+                if (data.text) return data.text;
+                if (data.message) return data.message;
+                if (Array.isArray(data) && data[0]?.output) return data[0].output;
+                return JSON.stringify(data);
+            } catch (e) {
+                return texto;
+            }
+        }
+
+        function adicionarMensagemChatbot(texto, tipo) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', tipo);
+            msgDiv.textContent = texto;
+            chatbotMessages.appendChild(msgDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        async function enviarMensagemChatbot() {
+            const texto = chatbotInput.value.trim();
+            if (!texto) return;
+            adicionarMensagemChatbot(texto, 'user');
+            chatbotInput.value = '';
+            try {
+                const resposta = await enviarParaIA(texto);
+                adicionarMensagemChatbot(resposta, 'bot');
+            } catch (erro) {
+                console.error('💥 Erro:', erro);
+                adicionarMensagemChatbot('Erro ao conectar com a IA. Tente novamente.', 'bot');
+            }
+        }
+
+        chatbotSendBtn.addEventListener('click', enviarMensagemChatbot);
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') enviarMensagemChatbot();
+        });
+
+        // Inicializa
+        carregarDados();
+    </script>
+</body>
+</html>

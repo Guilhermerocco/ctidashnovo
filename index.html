@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Login Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #mensagem {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h2>Login</h2>
+    
+    <div class="input-group">
+        <label for="usuario">Usuário</label>
+        <input type="text" id="usuario" placeholder="Digite o usuário">
+    </div>
+    
+    <div class="input-group">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="Digite a senha">
+    </div>
+    
+    <button onclick="autenticar()">Entrar</button>
+    
+    <div id="mensagem"></div>
+</div>
+
+<script>
+    function autenticar() {
+        // 1. Captura os valores digitados nos campos de input
+        const usuarioDigitado = document.getElementById('usuario').value;
+        const senhaDigitada = document.getElementById('senha').value;
+        const mensagemElemento = document.getElementById('mensagem');
+
+        // 2. Define as credenciais corretas (Simulação de cadastro)
+        const usuarioCorreto = "rodrigo.cti@senai.com";
+        const senhaCorreta = "cti134";
+
+        // 3. Estrutura condicional para validação
+        if (usuarioDigitado === usuarioCorreto && senhaDigitada === senhaCorreta) {
+            // Cria a "chave" de acesso temporária
+            sessionStorage.setItem('logado', 'true');
+    
+    // Agora sim, redireciona
+            window.location.href = "sistema.html";
+        }
+    }
+</script>
+
+</body>
+</html>
