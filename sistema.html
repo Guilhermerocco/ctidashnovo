@@ -637,7 +637,16 @@
                     nivel: clienteAtual.nivel_cliente,
                     score: clienteAtual.score,
                     servico_recomendado: clienteAtual.servico_recomendado,
-                    servicos_atuais: clienteAtual.servicos_atuais
+                    servicos_atuais: clienteAtual.servicos_atuais,
+                    total_justificativas: clienteAtual.justificativas.length,
+                    justificativas: clienteAtual.justificativas.map(j => ({
+                        tipo: j.tipo_regra,
+                        origem: j.origem || `${j.origem_1} + ${j.origem_2}`,
+                        destino: j.destino,
+                        lift: j.lift.toFixed(2),
+                        percentual_relacao: j.percentual_relacao + '%',
+                        confianca: j.score_regra
+                    }))
                 };
             }
             
