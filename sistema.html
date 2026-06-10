@@ -627,56 +627,68 @@
         });
 
         async function enviarParaIA(mensagem) {
-            const WEBHOOK_URL = 'https://cti12dias.app.n8n.cloud/webhook/cti12dias'; // 👈 CORRIGIDO: URL correta
-            
-            let contexto = null;
-            if (clienteAtual) {
-                contexto = {
-                    codigo: clienteAtual.codcli,
-                    segmento: clienteAtual.segmento,
-                    nivel: clienteAtual.nivel_cliente,
-                    score: clienteAtual.score,
-                    servico_recomendado: clienteAtual.servico_recomendado,
-                    servicos_atuais: clienteAtual.servicos_atuais,
-                    total_justificativas: clienteAtual.justificativas.length,
-                    justificativas: clienteAtual.justificativas.map(j => ({
-                        tipo: j.tipo_regra,
-                        origem: j.origem || `${j.origem_1} + ${j.origem_2}`,
-                        destino: j.destino,
-                        lift: j.lift.toFixed(2),
-                        percentual_relacao: j.percentual_relacao + '%',
-                        confianca: j.score_regra
-                    }))
-                };
-            }
-            
-            console.log('📤 Enviando:', mensagem);
-            console.log('📋 Contexto:', contexto);
-            
-            const response = await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pergunta: mensagem, contexto: contexto })
-            });
-            
-            console.log('📡 Status:', response.status);
-            
-            const texto = await response.text();
-            console.log('📥 Resposta bruta:', texto);
-            
-            try {
-                const data = JSON.parse(texto);
-                console.log('✅ Data:', data);
-                if (data.output) return data.output;
-                if (data.resposta) return data.resposta;
-                if (data.text) return data.text;
-                if (data.message) return data.message;
-                if (Array.isArray(data) && data[0]?.output) return data[0].output;
-                return JSON.stringify(data);
-            } catch (e) {
-                return texto;
-            }
+    const WEBHOOK_URL = 'https://cti12dias.app.n8n.cloud/webhook/cti12dias';
+    
+    console.log('🔍 clienteAtual:', clienteAtual); // 👈 NOVO LOG
+    
+    let contexto = null;
+    if (clienteAtual) {
+        contexto = {
+            codigo: clienteAtual.codcli,
+            segmento: clienteAtual.segmento,
+            nivel: clienteAtual.nivel_cliente,
+            score: clienteAtual.score,
+            servico_recomendado: clienteAtual.servico_recomendado,
+            servicos_atuais: clienteAtual.servicos_atuais,
+            total_justificativas: clienteAtual.justificativas.length,
+            justificativas: clienteAtual.justificativas.slice(0, 5).map(j => ({
+                tipo: j.tipo_regra,
+                origem: j.origem || `${j.origem_1} + ${j.origem_2}`,
+                destino: j.destino,
+                lift: j.lift.toFixed(2),
+                percentual_relacao: j.percentual_relacao + '%',
+                confianca: j.score_regra
+            }))
+        };
+        console.log('📋 Contexto montado:', contexto);
+    } else {
+        console.log('⚠️ Nenhum cliente selecionado!');
+    }
+    
+    console.log('📤 Enviando:', mensagem);
+    
+    try {
+        const response = await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                pergunta: mensagem,
+                contexto: contexto 
+            })
+        });
+        
+        console.log('📡 Status:', response.status);
+        
+        const texto = await response.text();
+        console.log('📥 Resposta bruta:', texto);
+        
+        try {
+            const data = JSON.parse(texto);
+            console.log('✅ Data:', data);
+            if (data.output) return data.output;
+            if (data.resposta) return data.resposta;
+            if (data.text) return data.text;
+            if (data.message) return data.message;
+            if (Array.isArray(data) && data[0]?.output) return data[0].output;
+            return JSON.stringify(data);
+        } catch (e) {
+            return texto;
         }
+    } catch (erro) {
+        console.error('💥 Erro:', erro);
+        throw erro;
+    }
+}
 
         function adicionarMensagemChatbot(texto, tipo) {
             const msgDiv = document.createElement('div');
